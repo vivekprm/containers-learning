@@ -153,4 +153,20 @@ Here’s the article: [Red Hat, Google Engineers Work on a Way for Kubernetes to
 
 Today there’s skopeo which lets you fetch and validate images from Docker registries
 
+# what we learned
+here’s the tl;dr:
+- you can run Docker containers without Docker
+- runC can run containers… but it doesn’t have overlayfs
+- but overlay filesystems are important!
+- rkt has overlay filesystem support.
+- you need to start & supervise the containers! You can use any regular process supervisor to do that.
+- also you need to tell your computers which containers to run
+- software around the OCI standard is evolving but it’s not there yet
+
+As far as I can tell running containers without using Docker or Kubernetes or anything is totally possible today, but no matter what tools you use it’s definitely not as simple as “just run a container”. Either way going through all these steps helps me understand what the actual components of running a container are and what all these different pieces of software are trying to do.
+
+This landscape is pretty confusing but I think it’s not impossible to understand! There are only a finite number of different pieces of software to figure out the role of :)
+
+If you want to see more about running containers from scratch, see [Cgroups, namespaces, and beyond: what are containers made from?](https://www.youtube.com/watch?v=sK5i-N34im8&feature=youtu.be) by jpetazzo. There’s a live demo of how to run a container with 0 tools (no docker, no rkt, no runC) [at this point in the video](https://www.youtube.com/watch?v=sK5i-N34im8&feature=youtu.be&t=41m11s) which is super super interesting.
+
 
