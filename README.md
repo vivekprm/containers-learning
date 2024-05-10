@@ -170,3 +170,33 @@ This landscape is pretty confusing but I think it’s not impossible to understa
 If you want to see more about running containers from scratch, see [Cgroups, namespaces, and beyond: what are containers made from?](https://www.youtube.com/watch?v=sK5i-N34im8&feature=youtu.be) by jpetazzo. There’s a live demo of how to run a container with 0 tools (no docker, no rkt, no runC) [at this point in the video](https://www.youtube.com/watch?v=sK5i-N34im8&feature=youtu.be&t=41m11s) which is super super interesting.
 
 
+The major organizations writing open source software to help people run containers on Linux seem to be (alphabetically): Canonical, CoreOS, Docker, Google, HashiCorp, Mesosphere, Red Hat, and OCI (cross-company foundation).
+
+I’ve tried to summarize each one in 3 words or less which is hard because a lot of this software has a lot of different jobs.
+- docker stuff
+  - [docker](https://www.docker.com/)
+  - [containerd (process supervisor)](https://www.containerd.tools/)
+  - [docker swarm](https://docs.docker.com/swarm/) (orchestration)
+- Kubernetes stuff
+  - [kubernetes](http://kubernetes.io/) (orchestration, has many components)
+- Mesosphere stuff
+  - [Mesos](http://mesos.apache.org/) (orchestration)
+- CoreOS stuff
+  - [CoreOS](https://coreos.com/why/) (linux distribution)
+  - [rkt](https://coreos.com/rkt) (runs containers)
+  - [flannel](https://coreos.com/flannel/docs/latest/) (network overlay)
+  - [etcd](https://coreos.com/etcd/) (key-value store)
+- HashiCorp stuff
+  - [consul](https://www.consul.io/) (key-value store, service discovery)
+  - [packer](https://www.packer.io/intro/) (creates containers)
+  - [vault](https://www.vaultproject.io/) (secrets management)
+  - [nomad](https://www.nomadproject.io/) (orchestration)
+- OCI (open container initiative) stuff
+  - [runC](http://runc.io/) (runs containers)
+  - [libcontainer](https://github.com/opencontainers/runc/tree/master/libcontainer) (donated by Docker, powers runC)
+- systemd-nspawn ([man page](https://www.freedesktop.org/software/systemd/man/systemd-nspawn.html)) (starts containers)
+- [dumb-init](https://github.com/Yelp/dumb-init) (init process)
+- [LXC](https://linuxcontainers.org/) (runs containers, from Canonical)
+
+There are also a bunch of container registries you can pay for, like [quay (from CoreOS)](https://quay.io/), [google’s one](https://cloud.google.com/container-registry/), [docker trusted registry](https://docs.docker.com/docker-trusted-registry/), etc.
+
