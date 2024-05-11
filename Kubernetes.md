@@ -105,34 +105,34 @@ kube-proxy creates one iptables rule per target host like this: (these rules are
 -A KUBE-SVC-LI77LBOOMGYET5US -m comment --comment "default/showreadiness:showreadiness" -j KUBE-SEP-RI4SRNQQXWSTGE2Y
 ```
 
-So ```kube-proxy``` creates a lot of iptables rules. What does that mean? What are the implications of that in for my network? There’s a great talk from Huawei called Scale Kubernetes to Support 50,000 services that says if you have 5,000 services in your kubernetes cluster, it takes 11 minutes to add a new rule. If that happened to your real cluster I think it would be very bad.
+So ```kube-proxy``` creates a lot of iptables rules. What does that mean? What are the implications of that in for my network? There’s a great talk from Huawei called [Scale Kubernetes to Support 50,000 services](https://www.youtube.com/watch?v=4-pawkiazEg) that says if you have 5,000 services in your kubernetes cluster, it takes 11 minutes to add a new rule. If that happened to your real cluster I think it would be very bad.
 
-I definitely don’t have 5,000 services in my cluster, but 5,000 isn’t SUCH a bit number. The proposal they give to solve this problem is to replace this iptables backend for kube-proxy with IPVS which is a load balancer that lives in the Linux kernel.
+I definitely don’t have 5,000 services in my cluster, but 5,000 isn’t SUCH a bit number. The proposal they give to solve this problem is to replace this iptables backend for kube-proxy with **IPVS** which is a load balancer that lives in the Linux kernel.
 
 It seems like kube-proxy is going in the direction of various Linux kernel based load balancers. I think this is partly because they support UDP load balancing, and other load balancers (like HAProxy) don’t support UDP load balancing.
 
-But I feel comfortable with HAProxy! Is it possible to replace kube-proxy with HAProxy! I googled this and I found this thread on kubernetes-sig-network saying:
+But I feel comfortable with HAProxy! Is it possible to replace kube-proxy with HAProxy! I googled this and I found [this thread](https://groups.google.com/forum/#!topic/kubernetes-sig-network/3NlBVbTUUU0) on kubernetes-sig-network saying:
 
-kube-proxy is so awesome, we have used in production for almost a year, it works well most of time, but as we have more and more services in our cluster, we found it was getting hard to debug and maintain. There is no iptables expert in our team, we do have HAProxy&LVS experts, as we have used these for several years, so we decided to replace this distributed proxy with a centralized HAProxy. I think this maybe useful for some other people who are considering using HAProxy with kubernetes, so we just update this project and make it open source: https://github.com/AdoHe/kube2haproxy. If you found it’s useful , please take a look and give a try.
+_kube-proxy is so awesome, we have used in production for almost a year, it works well most of time, but as we have more and more services in our cluster, we found it was getting hard to debug and maintain. There is no iptables expert in our team, we do have HAProxy&LVS experts, as we have used these for several years, so we decided to replace this distributed proxy with a centralized HAProxy. I think this maybe useful for some other people who are considering using HAProxy with kubernetes, so we just update this project and make it open source: https://github.com/AdoHe/kube2haproxy. If you found it’s useful , please take a look and give a try._
 
 So that’s an interesting option! I definitely don’t have answers here, but, some thoughts:
-
-Load balancers are complicated
-DNS is also complicated
-If you already have a lot of experience operating one kind of load balancer (like HAProxy), it might make sense to do some extra work to use that instead of starting to use an entirely new kind of load balancer (like kube-proxy)
+- Load balancers are complicated
+- DNS is also complicated
+- If you already have a lot of experience operating one kind of load balancer (like HAProxy), it might make sense to do some extra work to use that instead of starting to use an entirely new kind of load balancer (like kube-proxy)
 I’ve been thinking about where we want to be using kube-proxy or kube-dns at all – I think instead it might be better to just invest in Envoy and rely entirely on Envoy for all load balancing & service discovery. So then you just need to be good at operating Envoy.
+
 As you can see my thoughts on how to operate your Kubernetes internal proxies are still pretty confused and I’m still not super experienced with them. It’s totally possible that kube-proxy and kube-dns are fine and that they will just work fine but I still find it helpful to think through what some of the implications of using them are (for example “you can’t have 5,000 Kubernetes services”).
 
-Ingress
+# Ingress
 If you’re running a Kubernetes cluster, it’s pretty likely that you actually need HTTP requests to get into your cluster so far. This blog post is already too long and I don’t know much about ingress yet so we’re not going to talk about that.
 
-Useful links
+## Useful links
 A couple of useful links, to summarize:
+- [The Kubernetes networking model](https://kubernetes.io/docs/concepts/cluster-administration/networking/#kubernetes-model)
+- How GKE networking works: https://www.youtube.com/watch?v=y2bhV81MfKQ
+- The aforementioned talk on kube-proxy performance: https://www.youtube.com/watch?v=4-pawkiazEg
 
-The Kubernetes networking model
-How GKE networking works: https://www.youtube.com/watch?v=y2bhV81MfKQ
-The aforementioned talk on kube-proxy performance: https://www.youtube.com/watch?v=4-pawkiazEg
-I think networking operations is important
+# I think networking operations is important
 My sense of all this Kubernetes networking software is that it’s all still quite new and I’m not sure we (as a community) really know how to operate all of it well. This makes me worried as an operator because I really want my network to keep working! :) Also I feel like as an organization running your own Kubernetes cluster you need to make a pretty large investment into making sure you understand all the pieces so that you can fix things when they break. Which isn’t a bad thing, it’s just a thing.
 
 My plan right now is just to keep learning about how things work and reduce the number of moving parts I need to worry about as much as possible.
